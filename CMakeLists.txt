@@ -4,11 +4,14 @@ project(miniz-cpp)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_library(miniz STATIC miniz.c)
+
 set(TEST_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
 
 add_executable(miniz-cpp.test ${TEST_SOURCE})
 target_include_directories(miniz-cpp.test
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(miniz-cpp.test miniz)
 
 set(EXAMPLE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/examples/pipe.cpp
@@ -23,4 +26,6 @@ foreach(EXAMPLE_SOURCE IN ITEMS ${EXAMPLE_SOURCES})
 
     target_include_directories(${EXAMPLE_EXECUTABLE}
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_link_libraries(${EXAMPLE_EXECUTABLE} miniz)
 endforeach()
+
