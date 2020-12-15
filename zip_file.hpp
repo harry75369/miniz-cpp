@@ -54,10 +54,12 @@ std::string join_path(const std::vector<std::string> &parts)
     {
         joined.append(part);
 
-        if(i++ != parts.size() - 1)
+        if((i + 1) != parts.size())
         {
             joined.append(1, '/');
         }
+
+        i++;
     }
     return joined;
 }
@@ -154,6 +156,8 @@ uint32_t crc32buf(const char *buf, std::size_t len)
     {
         oldcrc32 = UPDC32(*buf, oldcrc32);
     }
+
+#undef UPDC32
 
     return ~oldcrc32;
 }
