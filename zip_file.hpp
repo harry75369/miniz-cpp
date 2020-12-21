@@ -433,14 +433,22 @@ public:
 
     void extract(const std::string &member, const std::string &path)
     {
-        std::fstream stream(detail::join_path({path, member}), std::ios::binary | std::ios::out);
+        auto fp = detail::join_path({ path, member });
+        auto ts = detail::split_path(fp);
+        if (ts.size() > 1)
+        {
+          ts.pop_back();
+        }
+        auto dp = detail::join_path(ts);
+        std::filesystem::create_directories(dp);
+
+        std::fstream stream(fp, std::ios::binary | std::ios::out);
         stream << open(member).rdbuf();
     }
 
     void extract(const zip_info &member, const std::string &path)
     {
-        std::fstream stream(detail::join_path({path, member.filename}), std::ios::binary | std::ios::out);
-        stream << open(member).rdbuf();
+        extract(member.filename, path);
     }
 
     void extractall(const std::string &path)
@@ -642,7 +650,7 @@ private:
             case MZ_ZIP_MODE_READING:
             {
                 mz_zip_archive archive_copy;
-            std::memset(&archive_copy, 0, sizeof(mz_zip_archive));
+                std::memset(&archive_copy, 0, sizeof(mz_zip_archive));
                 std::vector<char> buffer_copy(buffer_.begin(), buffer_.end());
 
                 if(!mz_zip_reader_init_mem(&archive_copy, buffer_copy.data(), buffer_copy.size(), 0))
