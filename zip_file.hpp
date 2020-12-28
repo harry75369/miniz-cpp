@@ -431,9 +431,8 @@ public:
         return open_stream_;
     }
 
-    void extract(const std::string &member, const std::string &path)
+    void extractFile(const std::string& member, const std::string& fp)
     {
-        auto fp = detail::join_path({ path, member });
         auto ts = detail::split_path(fp);
         if (ts.size() > 1)
         {
@@ -446,29 +445,35 @@ public:
         stream << open(member).rdbuf();
     }
 
-    void extract(const zip_info &member, const std::string &path)
+    void extract(const std::string &member, const std::string &dir)
     {
-        extract(member.filename, path);
+        auto fp = detail::join_path({ dir, member });
+        extractFile(member, fp);
     }
 
-    void extractall(const std::string &path)
+    void extract(const zip_info &member, const std::string &dir)
     {
-        extractall(path, infolist());
+        extract(member.filename, dir);
     }
 
-    void extractall(const std::string &path, const std::vector<std::string> &members)
+    void extractall(const std::string &dir)
+    {
+        extractall(dir, infolist());
+    }
+
+    void extractall(const std::string &dir, const std::vector<std::string> &members)
     {
         for(auto &member : members)
         {
-            extract(member, path);
+            extract(member, dir);
         }
     }
 
-    void extractall(const std::string &path, const std::vector<zip_info> &members)
+    void extractall(const std::string &dir, const std::vector<zip_info> &members)
     {
         for(auto &member : members)
         {
-            extract(member, path);
+            extract(member, dir);
         }
     }
 
